@@ -84,6 +84,9 @@ function ResultRow({ result, line }) {
     overflow: 'hidden',
   }
 
+  if (result.kind === 'loading') {
+    return <div style={{ ...rowBase, color: 'var(--text-muted)', fontSize: 11 }}>计算中…</div>
+  }
   if (result.kind === 'empty') {
     return <div style={{ ...rowBase }} />
   }

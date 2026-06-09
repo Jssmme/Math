@@ -1,5 +1,20 @@
-import * as math from 'mathjs'
-import * as chrono from 'chrono-node'
+let mathPromise = null
+let math = null
+
+export function isMathReady() {
+  return math !== null
+}
+
+export function ensureMath() {
+  if (math) return Promise.resolve(math)
+  if (!mathPromise) {
+    mathPromise = import('mathjs').then(({ create, all }) => {
+      math = create(all)
+      return math
+    })
+  }
+  return mathPromise
+}
 
 // ── Currency ──────────────────────────────────────────────────────────────────
 
@@ -87,16 +102,11 @@ export function parseDateLine(line) {
     return { type: 'date', display: formatDate(startOfDay(new Date())) }
   }
 
-  // chrono-node natural language parsing (English + some Chinese via chrono)
-  // BUT skip chrono for expressions with math operators (+, *, /) that don't
-  // contain date keywords — avoids "10+2" being parsed as a date.
-  if (!/[+\*/]/.test(trimmed) || /(today|今天|今日|年|月|日|天|周|星期)/i.test(trimmed)) {
-    try {
-      const parsed = chrono.parseDate(trimmed)
-      if (parsed) {
-        return { type: 'date', display: formatDate(parsed) }
-      }
-    } catch (_) {}
+  // ISO 日期格式支持 "2027-01-01" (轻量替代 chrono-node)
+  const isoM = trimmed.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})$/)
+  if (isoM) {
+    const d = startOfDay(new Date(+isoM[1], +isoM[2]-1, +isoM[3]))
+    if (!isNaN(d.getTime())) return { type: 'date', display: formatDate(d) }
   }
 
   return null
@@ -268,6 +278,15 @@ export function evaluateAll(text, rates) {
     _cnMap.set(cn, alias)
     scope[alias] = val
     scope[cn] = val
+  }
+
+  if (!math) {
+    return {
+      results: lines.map(() => ({ kind: 'loading' })),
+      sum: null,
+      lineCount: lines.length,
+      lines,
+    }
   }
 
   const results = lines.map(line => evaluateLine(line, scope, rates))

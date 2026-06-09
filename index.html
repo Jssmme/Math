@@ -4,13 +4,39 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>计算稿纸</title>
-    <!-- 字体嵌入：如果没网则回退到系统字体，不影响功能 -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+    <style>
+      /*
+        骨架屏 — webview 加载 HTML 的瞬间就渲染。
+        React 挂载到 #root 后会自动替换掉 #splash，无需手动清理。
+        background 使用硬编码 #1a1917（与 tauri.conf.json 的 backgroundColor 一致），
+        确保原生窗口底色与 webview 底色无缝衔接，消除黑屏。
+      */
+      html, body {
+        margin: 0;
+        height: 100%;
+        background: #1a1917;
+        overflow: hidden;
+      }
+      #splash {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        color: #504e49;
+        font-size: 14px;
+        user-select: none;
+        letter-spacing: 0.5px;
+      }
+      #splash::before {
+        content: '计算稿纸';
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div id="splash"></div>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

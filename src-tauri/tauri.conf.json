@@ -19,6 +19,7 @@
         "minHeight": 600,
         "decorations": false,
         "shadow": false,
+        "visible": true,
         "backgroundColor": "#1a1917",
         "resizable": true,
         "fullscreen": false
