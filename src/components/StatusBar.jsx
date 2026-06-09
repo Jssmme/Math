@@ -1,4 +1,3 @@
-import React from 'react'
 import { formatNumber } from '../utils/evaluator'
 
 export default function StatusBar({ cursorLine, cursorCol, lineCount, numericCount, sum }) {

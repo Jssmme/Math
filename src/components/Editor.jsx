@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useCallback } from 'react'
+import { useRef, useEffect, useCallback } from 'react'
 
 const LINE_HEIGHT = 26   // must match CSS --line-height
 const GUTTER_W   = 44   // must match CSS --gutter-w

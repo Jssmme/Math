@@ -1,11 +1,9 @@
-import React, { useState, useMemo, useRef, useCallback, useEffect } from 'react'
+import { useState, useMemo, useRef, useCallback, useEffect } from 'react'
 import ResultsPanel from './components/ResultsPanel'
 import Toolbar from './components/Toolbar'
 import StatusBar from './components/StatusBar'
 import { useRates } from './hooks/useRates'
 import { evaluateAll, isMathReady, ensureMath } from './utils/evaluator'
-
-const mark = window.__startupMark ?? (() => {})
 
 const DEFAULT_TEXT = `作者邮箱
 版本号
@@ -28,36 +26,28 @@ today + 1天
 100 HKD to CNY
 `
 
-const MIN_WIDTH = 400
-const MIN_HEIGHT = 400
 const MIN_PANE = 100
 
 export default function App({ onReady }) {
   const [text, setText] = useState(DEFAULT_TEXT)
   const [cursor, setCursor] = useState({ line: 1, col: 1 })
   const [editorScrollTop, setEditorScrollTop] = useState(0)
-  const taRef = useRef(null)
 
   const { rates, status: rateStatus, updatedAt: rateUpdatedAt, refreshRates, flash: rateFlash } = useRates()
 
   const [mathReady, setMathReady] = useState(isMathReady())
   const readyCalled = useRef(false)
-  const evalDone = useRef(false)
 
   useEffect(() => {
-    mark('App mount → ensureMath() 开始')
     ensureMath()
       .then(() => {
-        mark('mathjs create(all) 完成')
         setMathReady(true)
         if (!readyCalled.current) {
           readyCalled.current = true
           onReady?.()
         }
       })
-      .catch((err) => {
-        mark(`mathjs 加载失败: ${err.message || err}`)
-        // 即使 mathjs 失败也通知就绪，避免窗口永远不显示
+      .catch(() => {
         if (!readyCalled.current) {
           readyCalled.current = true
           onReady?.()

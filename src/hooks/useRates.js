@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
 const CACHE_KEY = 'notepad_calc_rates'
 const REFRESH_INTERVAL = 4 * 60 * 60 * 1000 // 4 hours
@@ -31,7 +31,6 @@ export function useRates() {
   const [status, setStatus] = useState('loading') // 'loading' | 'ok' | 'cached' | 'offline'
   const [updatedAt, setUpdatedAt] = useState(null)
   const [flash, setFlash] = useState(0) // increment to trigger flash
-  const mounting = useRef(true)
 
   const saveCache = useCallback((data) => {
     try {
@@ -93,7 +92,6 @@ export function useRates() {
       // No cache — fetch fresh
       refreshRates()
     }
-    mounting.current = false
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
