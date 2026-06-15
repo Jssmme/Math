@@ -272,7 +272,7 @@ export function evaluateAll(text, rates) {
   const lines = text.split('\n')
   const scope = {}
 
-  const builtins = { '作者邮箱': 'jssmme@gmail.com', '版本号': '1.0' }
+  const builtins = { '作者邮箱': 'jssmme@gmail.com', '版本号': '1.1' }
   for (const [cn, val] of Object.entries(builtins)) {
     const alias = `__cn${_cnCounter++}`
     _cnMap.set(cn, alias)
